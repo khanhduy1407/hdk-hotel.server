@@ -1,6 +1,7 @@
 package com.hdkhotel.controller;
 
 import com.hdkhotel.exception.PhotoRetrievalException;
+import com.hdkhotel.exception.ResourceNotFoundException;
 import com.hdkhotel.model.BookedRoom;
 import com.hdkhotel.model.Room;
 import com.hdkhotel.response.BookingResponse;
@@ -21,6 +22,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin // FIXED: add this to fix CORS issue
 @RestController
@@ -83,6 +85,15 @@ public class RoomController {
     theRoom.setPhoto(photoBlob);
     RoomResponse roomResponse = getRoomResponse(theRoom);
     return ResponseEntity.ok(roomResponse);
+  }
+
+  @GetMapping("/room/{roomId}")
+  public ResponseEntity<Optional<RoomResponse>> getRoomById(@PathVariable Long roomId) {
+    Optional<Room> theRoom = roomService.getRoomById(roomId);
+    return theRoom.map(room -> {
+      RoomResponse roomResponse = getRoomResponse(room);
+      return ResponseEntity.ok(Optional.of(roomResponse));
+    }).orElseThrow(() -> new ResourceNotFoundException("Room not found"));
   }
 
   private RoomResponse getRoomResponse(Room room) {
