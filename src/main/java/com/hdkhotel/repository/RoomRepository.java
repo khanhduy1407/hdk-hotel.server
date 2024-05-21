@@ -15,7 +15,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
   List<String> findDistinctRoomTypes();
 
   @Query("select r from Room r " +
-         "where r.roomType like %:roomType%" +
+         "where r.roomType like %:roomType% " +
          "and r.id not in (" +
          "  select br.room.id from BookedRoom br " +
          "  where ((br.checkInDate <= :checkOutDate) and (br.checkOutDate >= :checkInDate))" +
