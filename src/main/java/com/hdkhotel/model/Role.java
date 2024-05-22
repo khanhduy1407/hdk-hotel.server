@@ -1,5 +1,6 @@
 package com.hdkhotel.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class Role {
   private Long id;
   private String name;
 
+  @JsonIgnore
   @ManyToMany(mappedBy = "roles")
   private Collection<User> users = new HashSet<>();
 
