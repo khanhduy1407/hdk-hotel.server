@@ -34,6 +34,17 @@ public class BookingController {
     return ResponseEntity.ok(bookingResponses);
   }
 
+  @PostMapping("/room/{roomId}/booking")
+  public ResponseEntity<?> saveBooking(@PathVariable Long roomId,
+                                       @RequestBody BookedRoom bookingRequest) {
+    try {
+      String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
+      return ResponseEntity.ok("Room booked successfully, Your booking confirmation code is: " + confirmationCode);
+    } catch (InvalidBookingRequestException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
+  }
+
   @GetMapping("/confirmation/{confirmationCode}")
   public ResponseEntity<?> getBookingByConfirmationCode(@PathVariable String confirmationCode) {
     try {
@@ -45,15 +56,15 @@ public class BookingController {
     }
   }
 
-  @PostMapping("/room/{roomId}/booking")
-  public ResponseEntity<?> saveBooking(@PathVariable Long roomId,
-                                       @RequestBody BookedRoom bookingRequest) {
-    try {
-      String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
-      return ResponseEntity.ok("Room booked successfully, Your booking confirmation code is: " + confirmationCode);
-    } catch (InvalidBookingRequestException e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
+  @GetMapping("/user/{email}/bookings")
+  public ResponseEntity<List<BookingResponse>> getBookingsByUserEmail(@PathVariable String email) {
+    List<BookedRoom> bookings = bookingService.getBookingsByUserEmail(email);
+    List<BookingResponse> bookingResponses = new ArrayList<>();
+    for (BookedRoom booking : bookings) {
+      BookingResponse bookingResponse = getBookingResponse(booking);
+      bookingResponses.add(bookingResponse);
     }
+    return ResponseEntity.ok(bookingResponses);
   }
 
   @DeleteMapping("/booking/{bookingId}/delete")
