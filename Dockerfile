@@ -4,5 +4,5 @@ RUN mvn clean package -DskipTests
 
 FROM openjdk:17.0.1-jdk-slim
 COPY --from=build /target/hdk-hotel-0.0.1-SNAPSHOT.jar hdk-hotel.jar
-EXPOSE 9192
+EXPOSE 9193
 ENTRYPOINT ["java", "-jar", "hdk-hotel.jar"]
