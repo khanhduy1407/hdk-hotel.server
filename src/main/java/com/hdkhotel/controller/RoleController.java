@@ -13,7 +13,6 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.FOUND;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/roles")
 @RequiredArgsConstructor

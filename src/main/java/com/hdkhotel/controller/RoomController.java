@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin // FIXED: add this to fix CORS issue
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/rooms")

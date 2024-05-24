@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@CrossOrigin // FIXED: add this to fix CORS issue
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/bookings")
