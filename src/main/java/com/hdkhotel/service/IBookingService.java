@@ -1,9 +1,11 @@
 package com.hdkhotel.service;
 
 import com.hdkhotel.model.BookedRoom;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface IBookingService {
   List<BookedRoom> getAllBookingsByRoomId(Long roomId);
 
