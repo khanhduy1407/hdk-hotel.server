@@ -38,4 +38,5 @@ public class CorsConfig {
     FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
     bean.setOrder(CORS_FILTER_ORDER);
     return bean;
+  }
 }
