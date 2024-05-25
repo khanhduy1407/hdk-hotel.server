@@ -51,7 +51,7 @@ public class RoomService implements IRoomService {
   public byte[] getRoomPhotoByRoomId(Long roomId) throws SQLException {
     Optional<Room> theRoom = roomRepository.findById(roomId);
     if (theRoom.isEmpty()) {
-      throw new ResourceNotFoundException("Sorry, Room not found!");
+      throw new ResourceNotFoundException("Xin lỗi, Không tìm thấy phòng!");
     }
     Blob photoBlob = theRoom.get().getPhoto();
     if (photoBlob != null) {
@@ -72,7 +72,7 @@ public class RoomService implements IRoomService {
   @Override
   public Room updateRoom(Long roomId, String roomType, BigDecimal roomPrice, byte[] photoBytes) {
     Room room = roomRepository.findById(roomId)
-      .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+      .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phòng"));
     if (roomType != null) {
       room.setRoomType(roomType);
     }
@@ -83,7 +83,7 @@ public class RoomService implements IRoomService {
       try {
         room.setPhoto(new SerialBlob(photoBytes));
       } catch (SQLException ex) {
-        throw new InternalServerException("Error updating room");
+        throw new InternalServerException("Lỗi cập nhật thông tin phòng");
       }
     }
     return roomRepository.save(room);

@@ -32,7 +32,7 @@ public class UserController {
     } catch (UsernameNotFoundException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching user");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi lấy dữ liệu người dùng.");
     }
   }
 
@@ -41,11 +41,11 @@ public class UserController {
   public ResponseEntity<String> deleteUser(@PathVariable("userId") String email) {
     try {
       userService.deleteUser(email);
-      return ResponseEntity.ok("User deleted successfully");
+      return ResponseEntity.ok("Đã xóa người dùng thành công.");
     } catch (UsernameNotFoundException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting user");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi xóa người dùng.");
     }
   }
 }

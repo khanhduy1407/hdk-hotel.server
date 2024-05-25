@@ -41,7 +41,7 @@ public class BookingController {
                                        @RequestBody BookedRoom bookingRequest) {
     try {
       String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
-      return ResponseEntity.ok("Room booked successfully, Your booking confirmation code is: " + confirmationCode);
+      return ResponseEntity.ok("Đặt phòng thành công, Mã xác nhận phòng của bạn là: " + confirmationCode);
     } catch (InvalidBookingRequestException e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     }

@@ -59,13 +59,13 @@ public class JwtUtils {
       Jwts.parserBuilder().setSigningKey(key()).build().parse(token);
       return true;
     } catch (MalformedJwtException e) {
-      logger.error("Invalid jwt token: {}", e.getMessage());
+      logger.error("Token không hợp lệ: {}", e.getMessage());
     } catch (ExpiredJwtException e) {
-      logger.error("Expired token: {}", e.getMessage());
+      logger.error("Token đã hết hạn: {}", e.getMessage());
     } catch (UnsupportedJwtException e) {
-      logger.error("This token is not supported: {}", e.getMessage());
+      logger.error("Token này không được hỗ trợ: {}", e.getMessage());
     } catch (IllegalArgumentException e) {
-      logger.error("No claims found: {}", e.getMessage());
+      logger.error("Không tìm thấy quyền sở hữu: {}", e.getMessage());
     }
     return false;
   }

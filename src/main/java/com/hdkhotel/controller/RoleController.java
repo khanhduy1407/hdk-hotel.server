@@ -28,7 +28,7 @@ public class RoleController {
   public ResponseEntity<String> createRole(@RequestBody Role theRole) {
     try {
       roleService.createRole(theRole);
-      return ResponseEntity.ok("New role created successfully!");
+      return ResponseEntity.ok("Đã tạo quyền hạn mới thành công.");
     } catch (RoleAlreadyExistException re) {
       return ResponseEntity.status(CONFLICT).body(re.getMessage());
     }

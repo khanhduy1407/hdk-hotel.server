@@ -29,7 +29,7 @@ public class RoleService implements IRoleService {
     String roleName = "ROLE_" + theRole.getName().toUpperCase();
     Role role = new Role(roleName);
     if (roleRepository.existsByName(roleName)){
-      throw new RoleAlreadyExistException(theRole.getName() + " role already exists");
+      throw new RoleAlreadyExistException("Quyền '"+ theRole.getName() + "' đã tồn tại");
     }
     return roleRepository.save(role);
   }
@@ -54,7 +54,7 @@ public class RoleService implements IRoleService {
       roleRepository.save(role.get());
       return user.get();
     }
-    throw new UsernameNotFoundException("User not found");
+    throw new UsernameNotFoundException("Không tìm thấy người dùng.");
   }
 
   @Override
@@ -64,9 +64,9 @@ public class RoleService implements IRoleService {
     if (user.isPresent() && user.get().getRoles().contains(role.get())) {
       throw new UserAlreadyExistsException(
         user.get().getFirstName() +
-        " is already assigned to the " +
+        " đã được cấp quyền " +
         role.get().getName() +
-        " role"
+        "."
       );
     }
     if (role.isPresent()) {

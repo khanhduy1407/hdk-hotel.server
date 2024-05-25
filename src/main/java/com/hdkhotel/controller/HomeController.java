@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
   @GetMapping("/")
   public ResponseEntity<?> helloWorld() {
-    return ResponseEntity.ok("Hello World!");
+    return ResponseEntity.ok("Xin chào!");
   }
 }

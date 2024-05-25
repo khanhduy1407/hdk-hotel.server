@@ -4,7 +4,6 @@ import com.hdkhotel.exception.PhotoRetrievalException;
 import com.hdkhotel.exception.ResourceNotFoundException;
 import com.hdkhotel.model.BookedRoom;
 import com.hdkhotel.model.Room;
-import com.hdkhotel.response.BookingResponse;
 import com.hdkhotel.response.RoomResponse;
 import com.hdkhotel.service.BookingService;
 import com.hdkhotel.service.IRoomService;
@@ -98,7 +97,7 @@ public class RoomController {
     return theRoom.map(room -> {
       RoomResponse roomResponse = getRoomResponse(room);
       return ResponseEntity.ok(Optional.of(roomResponse));
-    }).orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+    }).orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phòng."));
   }
 
   @GetMapping("/available-rooms")
@@ -141,7 +140,7 @@ public class RoomController {
       try {
         photoBytes = photoBlob.getBytes(1, (int) photoBlob.length());
       } catch (SQLException e) {
-        throw new PhotoRetrievalException("Error retrieving photo");
+        throw new PhotoRetrievalException("Lỗi biên dịch hình ảnh.");
       }
     }
     return new RoomResponse(
