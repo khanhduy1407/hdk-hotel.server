@@ -39,7 +39,7 @@ public class BookingService implements IBookingService {
   @Override
   public String saveBooking(Long roomId, BookedRoom bookingRequest) {
     if (bookingRequest.getCheckOutDate().isBefore(bookingRequest.getCheckInDate())) {
-      throw new InvalidBookingRequestException("Ngày check-in phải trước ngày check-out.");
+      throw new InvalidBookingRequestException("Ngày nhận phòng phải trước ngày trả phòng.");
     }
     Room room = roomService.getRoomById(roomId).get();
     List<BookedRoom> existingBookings = room.getBookings();
