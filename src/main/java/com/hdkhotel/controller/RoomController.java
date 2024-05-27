@@ -4,6 +4,7 @@ import com.hdkhotel.exception.PhotoRetrievalException;
 import com.hdkhotel.exception.ResourceNotFoundException;
 import com.hdkhotel.model.BookedRoom;
 import com.hdkhotel.model.Room;
+import com.hdkhotel.response.BookingResponse;
 import com.hdkhotel.response.RoomResponse;
 import com.hdkhotel.service.BookingService;
 import com.hdkhotel.service.IRoomService;
@@ -35,10 +36,9 @@ public class RoomController {
 
   @PostMapping("/add/new-room")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
-  public ResponseEntity<RoomResponse> addNewRoom(
-          @RequestParam("photo") MultipartFile photo,
-          @RequestParam("roomType") String roomType,
-          @RequestParam("roomPrice") BigDecimal roomPrice) throws SQLException, IOException {
+  public ResponseEntity<RoomResponse> addNewRoom(@RequestParam("photo") MultipartFile photo,
+                                                 @RequestParam("roomType") String roomType,
+                                                 @RequestParam("roomPrice") BigDecimal roomPrice) throws SQLException, IOException {
     Room savedRoom = roomService.addNewRoom(photo, roomType, roomPrice);
     RoomResponse response = new RoomResponse(savedRoom.getId(), savedRoom.getRoomType(), savedRoom.getRoomPrice());
 
@@ -101,10 +101,9 @@ public class RoomController {
   }
 
   @GetMapping("/available-rooms")
-  public ResponseEntity<List<RoomResponse>> getAvailableRooms(
-          @RequestParam("checkInDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
-          @RequestParam("checkOutDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
-          @RequestParam("") String roomType) throws SQLException {
+  public ResponseEntity<List<RoomResponse>> getAvailableRooms(@RequestParam("checkInDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
+                                                              @RequestParam("checkOutDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
+                                                              @RequestParam("roomType") String roomType) throws SQLException {
     List<Room> availableRooms = roomService.getAvailableRooms(checkInDate, checkOutDate, roomType);
     List<RoomResponse> roomResponses = new ArrayList<>();
     for (Room room : availableRooms) {
@@ -125,22 +124,22 @@ public class RoomController {
 
   private RoomResponse getRoomResponse(Room room) {
     List<BookedRoom> bookings = getAllBookingsByRoomId(room.getId());
-//    List<BookingResponse> bookingInfo = bookings
-//      .stream()
-//      .map(booking -> new BookingResponse(
-//        booking.getBookingId(),
-//        booking.getCheckInDate(),
-//        booking.getCheckOutDate(),
-//        booking.getBookingConfirmationCode()
-//      ))
-//      .toList();
+    List<BookingResponse> bookingInfo = bookings
+      .stream()
+      .map(booking -> new BookingResponse(
+        booking.getBookingId(),
+        booking.getCheckInDate(),
+        booking.getCheckOutDate(),
+        booking.getBookingConfirmationCode()
+      ))
+      .toList();
     byte[] photoBytes = null;
     Blob photoBlob = room.getPhoto();
     if (photoBlob != null) {
       try {
         photoBytes = photoBlob.getBytes(1, (int) photoBlob.length());
       } catch (SQLException e) {
-        throw new PhotoRetrievalException("Lỗi biên dịch hình ảnh.");
+        throw new PhotoRetrievalException("Lỗi khi truy xuất hình ảnh.");
       }
     }
     return new RoomResponse(
@@ -148,7 +147,8 @@ public class RoomController {
       room.getRoomType(),
       room.getRoomPrice(),
       room.isBooked(),
-      photoBytes
+      photoBytes,
+      bookingInfo
     );
   }
 

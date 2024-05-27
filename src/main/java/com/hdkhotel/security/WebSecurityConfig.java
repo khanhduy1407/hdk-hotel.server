@@ -22,7 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @RequiredArgsConstructor
-@EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 public class WebSecurityConfig {
   private final HotelUserDetailsService userDetailsService;

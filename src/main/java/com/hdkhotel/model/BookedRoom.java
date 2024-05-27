@@ -18,16 +18,16 @@ public class BookedRoom {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long bookingId;
 
-  @Column(name = "check_In")
+  @Column(name = "check_in")
   private LocalDate checkInDate;
 
-  @Column(name = "check_Out")
+  @Column(name = "check_out")
   private LocalDate checkOutDate;
 
-  @Column(name = "guest_FullName")
+  @Column(name = "guest_fullName")
   private String guestFullName;
 
-  @Column(name = "guest_Email")
+  @Column(name = "guest_email")
   private String guestEmail;
 
   @Column(name = "adults")

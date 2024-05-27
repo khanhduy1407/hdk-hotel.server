@@ -28,7 +28,7 @@ public class RoleService implements IRoleService {
   public Role createRole(Role theRole) {
     String roleName = "ROLE_" + theRole.getName().toUpperCase();
     Role role = new Role(roleName);
-    if (roleRepository.existsByName(roleName)){
+    if (roleRepository.existsByName(roleName)) {
       throw new RoleAlreadyExistException("Quyền '"+ theRole.getName() + "' đã tồn tại");
     }
     return roleRepository.save(role);
