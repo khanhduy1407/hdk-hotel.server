@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 public interface IRoomService {
-  Room addNewRoom(MultipartFile photo, String roomType, BigDecimal roomPrice) throws SQLException, IOException;
+  Room addNewRoom(MultipartFile photo, String roomType, BigDecimal roomPrice, String roomDescription) throws SQLException, IOException;
 
   List<String> getAllRoomTypes();
 
@@ -23,7 +23,7 @@ public interface IRoomService {
 
   void deleteRoom(Long roomId);
 
-  Room updateRoom(Long roomId, String roomType, BigDecimal roomPrice, byte[] photoBytes);
+  Room updateRoom(Long roomId, String roomType, BigDecimal roomPrice, String roomDescription, byte[] photoBytes);
 
   Optional<Room> getRoomById(Long roomId);
 
