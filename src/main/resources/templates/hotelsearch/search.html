@@ -19,7 +19,6 @@
           </div>
           <div class="card-body">
             <form method="post" th:action="@{/search}" th:object="${hotelSearchDTO}">
-              <!-- TODO: Thêm tìm kiếm theo quốc gia -->
               <div class="form-group mb-3">
                 <label class="form-label" for="city">Thành phố:</label>
                 <input class="form-control" id="city" type="text" th:field="*{city}"
