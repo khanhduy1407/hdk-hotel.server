@@ -160,7 +160,7 @@ public class TestDataInitializer implements CommandLineRunner {
       } else {
         log.info("Kiểm tra duy trì dữ liệu test là không cần thiết");
       }
-      log.warn("Ứng dụng đã sẵn sàng");
+      log.warn("Ứng dụng đã sẵn sàng: http://localhost:9192/");
     } catch (DataAccessException e) {
       log.error("Ngoại lệ xảy ra trong quá trình lưu giữ dữ liệu: " + e.getMessage());
     } catch (Exception e) {
