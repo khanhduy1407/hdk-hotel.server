@@ -58,7 +58,7 @@ public class AdminController {
     try {
       userService.updateUser(userDTO);
     } catch (UsernameAlreadyExistsException e) {
-      result.rejectValue("username", "user.exists", "Username is already registered!");
+      result.rejectValue("username", "user.exists", "Tên người dùng đã được đăng ký!");
       return "admin/users-edit";
     }
 
