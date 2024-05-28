@@ -13,6 +13,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
@@ -31,7 +33,7 @@ public class HotelSearchController {
 
 
   @PostMapping("/search")
-  public String findAvailableHotelsByCityAndDate(@Valid @ModelAttribute("hotelSearchDTO") HotelSearchDTO hotelSearchDTO, BindingResult result) {
+  public String findAvailableHotelsByCityAndDate(@Valid @ModelAttribute("hotelSearchDTO") HotelSearchDTO hotelSearchDTO, BindingResult result) throws UnsupportedEncodingException {
     if (result.hasErrors()) {
       return "hotelsearch/search";
     }
@@ -42,8 +44,10 @@ public class HotelSearchController {
       return "hotelsearch/search";
     }
 
+    String encodedCity = URLEncoder.encode(hotelSearchDTO.getCity(), "UTF-8");
+
     // Redirect to a new GET endpoint with parameters for data fetching. Allows page refreshing
-    return String.format("redirect:/search-results?city=%s&checkinDate=%s&checkoutDate=%s", hotelSearchDTO.getCity(), hotelSearchDTO.getCheckinDate(), hotelSearchDTO.getCheckoutDate());
+    return String.format("redirect:/search-results?city=%s&checkinDate=%s&checkoutDate=%s", encodedCity, hotelSearchDTO.getCheckinDate(), hotelSearchDTO.getCheckoutDate());
   }
 
   @GetMapping("/search-results")

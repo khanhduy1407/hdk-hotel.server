@@ -54,7 +54,7 @@
       // Block invalid characters for city input
       $("#city").on("input", function () {
         var value = $(this).val();
-        var filteredValue = value.replace(/[^A-Za-z\s'-]/g, "");
+        // var filteredValue = value.replace(/[^A-Za-z\s'-]/g, "");
         $(this).val(filteredValue);
       });
 

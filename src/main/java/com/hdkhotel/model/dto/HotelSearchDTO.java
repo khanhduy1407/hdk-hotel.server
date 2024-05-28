@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Builder
 public class HotelSearchDTO {
   @NotBlank(message = "Thành phố không thể để trống")
-  @Pattern(regexp = "^(?!\\s*$)[A-Za-z '-]+$", message = "Thành phố chỉ được chứa các chữ cái, dấu nháy đơn(') hoặc dấu gạch ngang(-)")
+//  @Pattern(regexp = "^(?!\\s*$)[A-Za-z '-]+$", message = "Thành phố chỉ được chứa các chữ cái, dấu nháy đơn(') hoặc dấu gạch ngang(-)")
   private String city;
 
   @NotNull(message = "Ngày nhận phòng không được để trống")
