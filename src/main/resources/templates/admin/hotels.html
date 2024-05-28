@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout-main}">
+<head>
+  <title>Danh sách khách sạn</title>
+</head>
+<body>
+<th:block layout:fragment="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Danh sách khách sạn</h2>
+        <div th:if="${param.success}">
+          <div class="alert alert-success">
+            Thông tin khách sạn (ID: <span th:text="${updatedHotelId}"></span>) đã được cập nhật thành công
+          </div>
+        </div>
+        <table class="table table-striped align-middle">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Quản lý</th>
+            <th>Chỉnh sửa</th>
+            <th>Xóa</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr class="align-middle" th:each="hotel : ${hotels}">
+            <td th:text="${hotel.id}"></td>
+            <td th:text="${hotel.name}"></td>
+            <td th:text="${hotel.managerUsername}"></td>
+            <td>
+              <a th:href="@{/admin/hotels/edit/{id}(id=${hotel.id})}">Chỉnh sửa</a>
+            </td>
+            <td>
+              <form method="post"
+                    th:action="@{/admin/hotels/delete/{id}(id=${hotel.id})}"
+                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa khách sạn này không?');">
+                <input type="hidden" name="_method" value="DELETE"/>
+                <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</th:block>
+</body>
+</html>

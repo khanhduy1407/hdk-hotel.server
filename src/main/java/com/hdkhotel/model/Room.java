@@ -1,46 +1,60 @@
 package com.hdkhotel.model;
 
+import com.hdkhotel.model.enums.RoomType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.RandomStringUtils;
+import lombok.*;
 
-import java.math.BigDecimal;
-import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Room {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  private String roomType;
-  private BigDecimal roomPrice;
-  private String roomDescription;
-  private boolean isBooked = false;
-  @Lob
-  private Blob photo;
 
-  @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<BookedRoom> bookings;
+  @ManyToOne
+  @JoinColumn(nullable = false)
+  private Hotel hotel;
 
-  public Room() {
-    this.bookings = new ArrayList<>();
+  @Enumerated(EnumType.STRING)
+  private RoomType roomType;
+
+  private int roomCount;
+
+  private double pricePerNight;
+
+  @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<Availability> availabilities = new ArrayList<>();
+
+  @Override
+  public String toString() {
+    return "Room{" +
+      "id=" + id +
+      ", hotel=" + hotel +
+      ", roomType=" + roomType +
+      ", roomCount=" + roomCount +
+      ", pricePerNight=" + pricePerNight +
+      '}';
   }
 
-  public void addBooking(BookedRoom booking) {
-    if (bookings == null) {
-      bookings = new ArrayList<>();
-    }
-    bookings.add(booking);
-    booking.setRoom(this);
-    isBooked = true;
-    String bookingCode = RandomStringUtils.randomNumeric(10);
-    booking.setBookingConfirmationCode(bookingCode);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Room room = (Room) o;
+    return Objects.equals(id, room.id) && Objects.equals(hotel, room.hotel);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, hotel);
   }
 }

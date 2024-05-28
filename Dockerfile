@@ -3,6 +3,6 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 FROM openjdk:17.0.1-jdk-slim
-COPY --from=build /target/hdk-hotel-0.0.1-SNAPSHOT.jar hdk-hotel.jar
+COPY --from=build /target/hdkhotel-0.0.1-SNAPSHOT.jar hdkhotel.jar
 EXPOSE 9193
-ENTRYPOINT ["java", "-jar", "hdk-hotel.jar"]
+ENTRYPOINT ["java", "-jar", "hdkhotel.jar"]

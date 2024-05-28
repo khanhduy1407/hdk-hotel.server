@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout-main}">
+<head>
+  <title>Đăng ký</title>
+</head>
+<body>
+<th:block layout:fragment="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="text-center">Đăng ký khách hàng</h2>
+          </div>
+          <div class="card-body">
+            <form method="post" th:action="@{/register/customer}" th:object="${user}">
+              <div class="form-group mb-3">
+                <label class="form-label" for="username">Email:</label>
+                <input class="form-control" id="username" type="email" th:field="*{username}" autofocus>
+                <p class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+              </div>
+              <div class="form-group mb-3">
+                <label class="form-label" for="password">Mật khẩu:</label>
+                <input class="form-control" id="password" type="password" th:field="*{password}">
+                <p class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+              </div>
+              <div class="form-group mb-3">
+                <label class="form-label" for="name">Tên:</label>
+                <input class="form-control" id="name" type="text" th:field="*{name}">
+                <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+              </div>
+              <div class="form-group mb-3">
+                <label class="form-label" for="lastName">Họ:</label>
+                <input class="form-control" id="lastName" type="text" th:field="*{lastName}">
+                <p class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
+              </div>
+              <div class="form-group mb-3">
+                <button type="submit" class="btn btn-primary">Đăng ký</button>
+                <span>Bạn đã có tài khoản? <a th:href="@{/login}">Đăng nhập ngay</a></span>
+              </div>
+              <div class="alert alert-success" th:if="${param.success}">
+                Đăng ký thành công!
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</th:block>
+</body>
+</html>

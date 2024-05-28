@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout-main}">
+<head>
+  <title>Kết quả tìm kiếm</title>
+</head>
+<body>
+<th:block layout:fragment="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="mb-5">
+          <h2>Kết quả tìm kiếm cho "<span th:text="${city}">Thành phố</span>"</h2>
+          <table class="table border-0">
+            <tbody>
+            <tr>
+              <td class="border-0 text-nowrap py-0" style="width:20%"><h5>Thời gian:</h5></td>
+              <td class="border-0 py-0"><h5><span th:text="${days}">0</span> đêm</h5></td>
+            </tr>
+            <tr>
+              <td class="border-0 text-nowrap py-0" style="width:20%"><h5>Ngày nhận phòng:</h5></td>
+              <td class="border-0 py-0"><h5><span th:text="${checkinDate}"></span></h5></td>
+            </tr>
+            <tr>
+              <td class="border-0 text-nowrap py-0" style="width:20%"><h5>Ngày trả phòng:</h5></td>
+              <td class="border-0 py-0"><h5><span th:text="${checkoutDate}"></span></h5></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div th:if="${noHotelsFound}" class="alert alert-danger text-center">
+          <p class="fs-5">Không tìm thấy khách sạn nào đáp ứng tiêu chí mà bạn đã cung cấp.<br>Vui lòng thử lại với ngày hoặc thành phố khác.</p>
+          <div class="mt-3">
+            <a href="/search" class="btn btn-primary">Trở lại tìm kiếm</a>
+          </div>
+        </div>
+        <div th:each="hotel : ${hotels}">
+          <div class="card mb-3">
+            <div class="row g-0">
+              <div class="col-md-12">
+                <div class="card-body">
+                  <h5 class="card-title fw-bold" th:text="${hotel.name}">Tên khách sạn</h5>
+                </div>
+              </div>
+            </div>
+            <div class="row g-0">
+              <div class="col-md-4">
+                <!-- Image placeholder -->
+              </div>
+              <div class="col-md-6">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-6">
+                      <p class="card-text fw-bold">Phòng có sẵn</p>
+                      <div class="row">
+                        <div class="col-6">
+                          <p class="card-text">Đơn:</p>
+                          <p class="card-text">Đôi:</p>
+                        </div>
+                        <div class="col-6">
+                          <p class="card-text"><span
+                            th:text="${hotel.maxAvailableSingleRooms}">0</span> phòng</p>
+                          <p class="card-text"><span
+                            th:text="${hotel.maxAvailableDoubleRooms}">0</span> phòng</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <p class="card-text fw-bold">Giá mỗi đêm</p>
+                      <th:block th:each="room : ${hotel.roomDTOs}">
+                        <p class="card-text" th:if="${room.roomType.name() == 'SINGLE'}">
+                          $<span th:text="${room.pricePerNight}"></span>
+                        </p>
+                        <p class="card-text" th:if="${room.roomType.name() == 'DOUBLE'}">
+                          $<span th:text="${room.pricePerNight}"></span>
+                        </p>
+                      </th:block>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-2 d-flex align-items-center">
+                <a th:href="@{/hotel-details/{id}(id=${hotel.id}, checkinDate=${checkinDate}, checkoutDate=${checkoutDate})}"
+                   class="btn btn-primary w-100 my-2 mx-3">Đặt ngay</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</th:block>
+</body>
+</html>

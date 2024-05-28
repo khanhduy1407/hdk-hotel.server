@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/layout-main}">
+<head>
+  <title>Chi tiết tài khoản</title>
+</head>
+<body>
+<th:block layout:fragment="content">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div th:if="${param.success}">
+          <div class="alert alert-success">Thông tin người dùng được cập nhật thành công</div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h2 class="text-center">Chi tiết tài khoản người dùng</h2>
+          </div>
+          <div class="card-body">
+            <form>
+              <div class="form-group mb-3 row">
+                <label class="col-sm-3 col-form-label fw-bold" for="username">Tên người dùng:</label>
+                <div class="col-sm-9">
+                  <input class="form-control-plaintext" id="username" readonly type="text"
+                         th:value="${user.username}">
+                </div>
+              </div>
+              <div class="form-group mb-3 row">
+                <label class="col-sm-3 col-form-label fw-bold" for="name">Tên:</label>
+                <div class="col-sm-9">
+                  <input class="form-control-plaintext" id="name" readonly type="text"
+                         th:value="${user.name}">
+                </div>
+              </div>
+              <div class="form-group mb-3 row">
+                <label class="col-sm-3 col-form-label fw-bold" for="lastName">Họ:</label>
+                <div class="col-sm-9">
+                  <input class="form-control-plaintext" id="lastName" readonly type="text"
+                         th:value="${user.lastName}">
+                </div>
+              </div>
+              <div class="form-group mb-3">
+                <a th:href="@{/customer/account/edit}" class="btn btn-primary">Chỉnh sửa</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</th:block>
+</body>
+</html>

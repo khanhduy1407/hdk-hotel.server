@@ -1,66 +1,53 @@
 package com.hdkhotel.model;
 
+import com.hdkhotel.model.enums.RoomType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class BookedRoom {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long bookingId;
+  private Long id;
 
-  @Column(name = "check_in")
-  private LocalDate checkInDate;
+  @ManyToOne
+  @JoinColumn(nullable = false)
+  private Booking booking;
 
-  @Column(name = "check_out")
-  private LocalDate checkOutDate;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private RoomType roomType;
 
-  @Column(name = "guest_fullName")
-  private String guestFullName;
+  @Column(nullable = false)
+  private int count;
 
-  @Column(name = "guest_email")
-  private String guestEmail;
-
-  @Column(name = "adults")
-  private int NumOfAdults;
-
-  @Column(name = "children")
-  private int NumOfChildren;
-
-  @Column(name = "total_guest")
-  private int totalNumOfGuest;
-
-  @Column(name = "confirmation_Code")
-  private String bookingConfirmationCode;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "room_id")
-  private Room room;
-
-  public void calculateTotalNumberOfGuest() {
-    this.totalNumOfGuest = this.NumOfAdults + this.NumOfChildren;
+  @Override
+  public String toString() {
+    return "BookedRoom{" +
+      "id=" + id +
+      ", booking=" + booking +
+      ", roomType=" + roomType +
+      ", count=" + count +
+      '}';
   }
 
-  public void setNumOfAdults(int numOfAdults) {
-    NumOfAdults = numOfAdults;
-    calculateTotalNumberOfGuest();
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    BookedRoom that = (BookedRoom) o;
+    return Objects.equals(id, that.id) && Objects.equals(booking, that.booking);
   }
 
-  public void setNumOfChildren(int numOfChildren) {
-    NumOfChildren = numOfChildren;
-    calculateTotalNumberOfGuest();
-  }
-
-  public void setBookingConfirmationCode(String bookingConfirmationCode) {
-    this.bookingConfirmationCode = bookingConfirmationCode;
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, booking);
   }
 }

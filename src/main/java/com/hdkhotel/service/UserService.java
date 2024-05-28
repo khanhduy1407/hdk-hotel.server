@@ -1,57 +1,29 @@
 package com.hdkhotel.service;
 
-import com.hdkhotel.exception.UserAlreadyExistsException;
-import com.hdkhotel.model.Role;
 import com.hdkhotel.model.User;
-import com.hdkhotel.repository.RoleRepository;
-import com.hdkhotel.repository.UserRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import com.hdkhotel.model.dto.ResetPasswordDTO;
+import com.hdkhotel.model.dto.UserDTO;
+import com.hdkhotel.model.dto.UserRegistrationDTO;
 
-import java.util.Collections;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class UserService implements IUserService {
-  private final UserRepository userRepository;
-  private final PasswordEncoder passwordEncoder;
-  private final RoleRepository roleRepository;
+public interface UserService {
+  User saveUser(UserRegistrationDTO registrationDTO);
 
-  @Override
-  public User registerUser(User user) {
-    if (userRepository.existsByEmail(user.getEmail())) {
-      throw new UserAlreadyExistsException("Tài khoản " + user.getEmail() + " đã tồn tại");
-    }
+  // For registration
+  User findUserByUsername(String username);
 
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
-    System.out.println(user.getPassword());
-    Role userRole = roleRepository.findByName("ROLE_USER").get();
-    user.setRoles(Collections.singletonList(userRole));
+  UserDTO findUserDTOByUsername(String username);
 
-    return userRepository.save(user);
-  }
+  UserDTO findUserById(Long id);
 
-  @Override
-  public List<User> getUsers() {
-    return userRepository.findAll();
-  }
+  List<UserDTO> findAllUsers();
 
-  @Transactional
-  @Override
-  public void deleteUser(String email) {
-    User theUser = getUser(email);
-    if (theUser != null) {
-      userRepository.deleteByEmail(email);
-    }
-  }
+  void updateUser(UserDTO userDTO);
 
-  @Override
-  public User getUser(String email) {
-    return userRepository.findByEmail(email)
-      .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng."));
-  }
+  void updateLoggedInUser(UserDTO userDTO);
+
+  void deleteUserById(Long id);
+
+  User resetPassword(ResetPasswordDTO resetPasswordDTO);
 }

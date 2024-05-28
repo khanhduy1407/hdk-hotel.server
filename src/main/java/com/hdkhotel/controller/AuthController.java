@@ -1,62 +1,95 @@
 package com.hdkhotel.controller;
 
-import com.hdkhotel.exception.UserAlreadyExistsException;
-import com.hdkhotel.model.User;
-import com.hdkhotel.request.LoginRequest;
-import com.hdkhotel.response.JwtResponse;
-import com.hdkhotel.security.jwt.JwtUtils;
-import com.hdkhotel.security.user.HotelUserDetails;
-import com.hdkhotel.service.IUserService;
+import com.hdkhotel.exception.UsernameAlreadyExistsException;
+import com.hdkhotel.model.enums.RoleType;
+import com.hdkhotel.model.dto.UserRegistrationDTO;
+import com.hdkhotel.security.RedirectUtil;
+import com.hdkhotel.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/auth")
+@Controller
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
-  private final IUserService userService;
-  private final AuthenticationManager authenticationManager;
-  private final JwtUtils jwtUtils;
+  private final UserService userService;
 
-  @PostMapping("/register-user")
-  public ResponseEntity<?> registerUser(@RequestBody User user) {
-    try {
-      userService.registerUser(user);
-      return ResponseEntity.ok("Đăng ký thành công.");
-    } catch (UserAlreadyExistsException e) {
-      return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-    }
+  @GetMapping("/")
+  public String homePage(Authentication authentication) {
+    String redirect = getAuthenticatedUserRedirectUrl(authentication);
+    if (redirect != null) return redirect;
+    log.debug("Truy cập trang chủ");
+    return "index";
   }
 
-  @PostMapping("/login")
-  public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest request) {
-    Authentication authentication = authenticationManager
-      .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-    String jwt = jwtUtils.generateJwtTokenForUser(authentication);
-    HotelUserDetails userDetails = (HotelUserDetails) authentication.getPrincipal();
-    List<String> roles = userDetails.getAuthorities()
-      .stream()
-      .map(GrantedAuthority::getAuthority)
-      .toList();
-    return ResponseEntity.ok(new JwtResponse(
-      userDetails.getId(),
-      userDetails.getEmail(),
-      jwt,
-      roles
-    ));
+  @GetMapping("/login")
+  public String loginPage(Authentication authentication) {
+    String redirect = getAuthenticatedUserRedirectUrl(authentication);
+    if (redirect != null) return redirect;
+    log.debug("Truy cập trang đăng nhập");
+    return "login";
+  }
+
+  @GetMapping("/register/customer")
+  public String showCustomerRegistrationForm(@ModelAttribute("user") UserRegistrationDTO registrationDTO, Authentication authentication) {
+    String redirect = getAuthenticatedUserRedirectUrl(authentication);
+    if (redirect != null) return redirect;
+    log.info("Hiển thị form đăng ký của khách hàng");
+    return "register-customer";
+  }
+
+  @PostMapping("/register/customer")
+  public String registerCustomerAccount(@Valid @ModelAttribute("user") UserRegistrationDTO registrationDTO, BindingResult result) {
+    log.info("Đang cố gắng đăng ký tài khoản khách hàng: {}", registrationDTO.getUsername());
+    registrationDTO.setRoleType(RoleType.CUSTOMER);
+    return registerUser(registrationDTO, result, "register-customer", "register/customer");
+  }
+
+  @GetMapping("/register/manager")
+  public String showManagerRegistrationForm(@ModelAttribute("user") UserRegistrationDTO registrationDTO, Authentication authentication) {
+    String redirect = getAuthenticatedUserRedirectUrl(authentication);
+    if (redirect != null) return redirect;
+    log.info("Hiển thị form đăng ký người quản lý");
+    return "register-manager";
+  }
+
+  @PostMapping("/register/manager")
+  public String registerManagerAccount(@Valid @ModelAttribute("user") UserRegistrationDTO registrationDTO, BindingResult result) {
+    log.info("Đang cố gắng đăng ký tài khoản người quản lý: {}", registrationDTO.getUsername());
+    registrationDTO.setRoleType(RoleType.HOTEL_MANAGER);
+    return registerUser(registrationDTO, result, "register-manager", "register/manager");
+  }
+
+  private String registerUser(UserRegistrationDTO registrationDTO, BindingResult result, String view, String redirectUrl) {
+    if (result.hasErrors()) {
+      log.warn("Đăng ký không thành công do lỗi xác thực: {}", result.getAllErrors());
+      return view;
+    }
+    try {
+      userService.saveUser(registrationDTO);
+      log.info("Đăng ký người dùng thành công: {}", registrationDTO.getUsername());
+    } catch (UsernameAlreadyExistsException e) {
+      log.error("Đăng ký không thành công do tên người dùng đã tồn tại: {}", e.getMessage());
+      result.rejectValue("username", "user.exists", e.getMessage());
+      return view;
+    }
+    return "redirect:/" + redirectUrl + "?success";
+  }
+
+  private String getAuthenticatedUserRedirectUrl(Authentication authentication) {
+    if (authentication != null && authentication.isAuthenticated()) {
+      String redirectUrl = RedirectUtil.getRedirectUrl(authentication);
+      if (redirectUrl != null) {
+        return "redirect:" + redirectUrl;
+      }
+    }
+    return null;
   }
 }

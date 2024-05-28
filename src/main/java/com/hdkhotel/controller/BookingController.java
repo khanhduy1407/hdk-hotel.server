@@ -1,98 +1,119 @@
 package com.hdkhotel.controller;
 
-import com.hdkhotel.exception.InvalidBookingRequestException;
-import com.hdkhotel.exception.ResourceNotFoundException;
-import com.hdkhotel.model.BookedRoom;
-import com.hdkhotel.model.Room;
-import com.hdkhotel.response.BookingResponse;
-import com.hdkhotel.response.RoomResponse;
-import com.hdkhotel.service.IBookingService;
-import com.hdkhotel.service.IRoomService;
+import com.hdkhotel.model.dto.*;
+import com.hdkhotel.service.BookingService;
+import com.hdkhotel.service.HotelService;
+import com.hdkhotel.service.UserService;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
+@Controller
+@RequestMapping("/booking")
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("/bookings")
+@Slf4j
 public class BookingController {
-  private final IBookingService bookingService;
-  private final IRoomService roomService;
+  private final HotelService hotelService;
+  private final UserService userService;
+  private final BookingService bookingService;
 
-  @GetMapping("/all-bookings")
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
-  public ResponseEntity<List<BookingResponse>> getAllBookings() {
-    List<BookedRoom> bookings = bookingService.getAllBookings();
-    List<BookingResponse> bookingResponses = new ArrayList<>();
-    for (BookedRoom booking : bookings) {
-      BookingResponse bookingResponse = getBookingResponse(booking);
-      bookingResponses.add(bookingResponse);
-    }
-    return ResponseEntity.ok(bookingResponses);
+  @PostMapping("/initiate")
+  public String initiateBooking(@ModelAttribute BookingInitiationDTO bookingInitiationDTO, HttpSession session) {
+    session.setAttribute("bookingInitiationDTO", bookingInitiationDTO);
+    log.debug("BookingInitiationDTO được đặt trong phiên: {}", bookingInitiationDTO);
+    return "redirect:/booking/payment";
   }
 
-  @PostMapping("/room/{roomId}/booking")
-  public ResponseEntity<?> saveBooking(@PathVariable Long roomId,
-                                       @RequestBody BookedRoom bookingRequest) {
+  @GetMapping("/payment")
+  public String showPaymentPage(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+    BookingInitiationDTO bookingInitiationDTO = (BookingInitiationDTO) session.getAttribute("bookingInitiationDTO");
+    log.debug("BookingInitiationDTO được truy xuất từ phiên: {}", bookingInitiationDTO);
+
+    if (bookingInitiationDTO == null) {
+      redirectAttributes.addFlashAttribute("errorMessage", "Phiên của bạn đã hết hạn. Hãy bắt đầu một tìm kiếm mới.");
+      return "redirect:/search";
+    }
+
+    HotelDTO hotelDTO = hotelService.findHotelDtoById(bookingInitiationDTO.getHotelId());
+
+    model.addAttribute("bookingInitiationDTO", bookingInitiationDTO);
+    model.addAttribute("hotelDTO", hotelDTO);
+    model.addAttribute("paymentCardDTO", new PaymentCardDTO());
+
+    return "booking/payment";
+  }
+
+  @PostMapping("/payment")
+  public String confirmBooking(@Valid @ModelAttribute("paymentCardDTO") PaymentCardDTO paymentDTO, BindingResult result, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+    BookingInitiationDTO bookingInitiationDTO = (BookingInitiationDTO) session.getAttribute("bookingInitiationDTO");
+    log.debug("BookingInitiationDTO được truy xuất từ phiên khi bắt đầu completeBooking: {}", bookingInitiationDTO);
+    if (bookingInitiationDTO == null) {
+      redirectAttributes.addFlashAttribute("errorMessage", "Phiên của bạn đã hết hạn. Hãy bắt đầu một tìm kiếm mới.");
+      return "redirect:/search";
+    }
+
+    if (result.hasErrors()) {
+      log.warn("Đã xảy ra lỗi xác thực khi đang hoàn tất đặt phòng");
+      HotelDTO hotelDTO = hotelService.findHotelDtoById(bookingInitiationDTO.getHotelId());
+      model.addAttribute("bookingInitiationDTO", bookingInitiationDTO);
+      model.addAttribute("hotelDTO", hotelDTO);
+      model.addAttribute("paymentCardDTO", paymentDTO);
+      return "booking/payment";
+    }
+
     try {
-      String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
-      return ResponseEntity.ok("Đặt phòng thành công, Mã xác nhận phòng của bạn là: " + confirmationCode);
-    } catch (InvalidBookingRequestException e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
+      Long userId = getLoggedInUserId();
+      BookingDTO bookingDTO = bookingService.confirmBooking(bookingInitiationDTO, userId);
+      redirectAttributes.addFlashAttribute("bookingDTO", bookingDTO);
+
+      return "redirect:/booking/confirmation";
+    } catch (Exception e) {
+      log.error("Đã xảy ra lỗi khi đang hoàn tất đặt phòng", e);
+      redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.");
+      return "redirect:/booking/payment";
     }
   }
 
-  @GetMapping("/confirmation/{confirmationCode}")
-  public ResponseEntity<?> getBookingByConfirmationCode(@PathVariable String confirmationCode) {
-    try {
-      BookedRoom booking = bookingService.findByBookingConfirmationCode(confirmationCode);
-      BookingResponse bookingResponse = getBookingResponse(booking);
-      return ResponseEntity.ok(bookingResponse);
-    } catch (ResourceNotFoundException ex) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  @GetMapping("/confirmation")
+  public String showConfirmationPage(Model model, RedirectAttributes redirectAttributes) {
+    // Attempt to retrieve the bookingDTO from flash attributes
+    BookingDTO bookingDTO = (BookingDTO) model.asMap().get("bookingDTO");
+
+    if (bookingDTO == null) {
+      redirectAttributes.addFlashAttribute("errorMessage", "Phiên của bạn đã hết hạn hoặc quá trình đặt phòng không được hoàn thành đúng cách. Hãy bắt đầu một tìm kiếm mới.");
+      return "redirect:/search";
     }
+
+    LocalDate checkinDate = bookingDTO.getCheckinDate();
+    LocalDate checkoutDate = bookingDTO.getCheckoutDate();
+    long durationDays = ChronoUnit.DAYS.between(checkinDate, checkoutDate);
+
+    model.addAttribute("days", durationDays);
+    model.addAttribute("bookingDTO", bookingDTO);
+
+    return "booking/confirmation";
   }
 
-  @GetMapping("/user/{email}/bookings")
-  public ResponseEntity<List<BookingResponse>> getBookingsByUserEmail(@PathVariable String email) {
-    List<BookedRoom> bookings = bookingService.getBookingsByUserEmail(email);
-    List<BookingResponse> bookingResponses = new ArrayList<>();
-    for (BookedRoom booking : bookings) {
-      BookingResponse bookingResponse = getBookingResponse(booking);
-      bookingResponses.add(bookingResponse);
-    }
-    return ResponseEntity.ok(bookingResponses);
+  private Long getLoggedInUserId() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String username = auth.getName();
+    UserDTO userDTO = userService.findUserDTOByUsername(username);
+    log.info("Đã tìm nạp ID người dùng đã đăng nhập: {}", userDTO.getId());
+    return userDTO.getId();
   }
 
-  @DeleteMapping("/booking/{bookingId}/delete")
-  public void cancelBooking(@PathVariable Long bookingId) {
-    bookingService.cancelBooking(bookingId);
-  }
-
-  private BookingResponse getBookingResponse(BookedRoom booking) {
-    Room theRoom = roomService.getRoomById(booking.getRoom().getId()).get();
-    RoomResponse room = new RoomResponse(
-      theRoom.getId(),
-      theRoom.getRoomType(),
-      theRoom.getRoomPrice(),
-      theRoom.getRoomDescription()
-    );
-    return new BookingResponse(
-      booking.getBookingId(),
-      booking.getCheckInDate(),
-      booking.getCheckOutDate(),
-      booking.getGuestFullName(),
-      booking.getGuestEmail(),
-      booking.getNumOfAdults(),
-      booking.getNumOfChildren(),
-      booking.getTotalNumOfGuest(),
-      booking.getBookingConfirmationCode(),
-      room
-    );
-  }
 }

@@ -1,14 +1,11 @@
 package com.hdkhotel.repository;
 
 import com.hdkhotel.model.Role;
+import com.hdkhotel.model.enums.RoleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
-  Optional<Role> findByName(String role);
-
-  boolean existsByName(String role);
+  Role findByRoleType(RoleType roleType);
 }

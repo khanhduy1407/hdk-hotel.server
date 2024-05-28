@@ -1,6 +1,6 @@
 package com.hdkhotel.repository;
 
-import com.hdkhotel.model.BookedRoom;
+import com.hdkhotel.model.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BookingRepository extends JpaRepository<BookedRoom, Long> {
-  List<BookedRoom> findByRoomId(Long roomId);
+public interface BookingRepository extends JpaRepository<Booking, Long> {
+  List<Booking> findBookingsByCustomerId(Long customerId);
 
-  Optional<BookedRoom> findByBookingConfirmationCode(String confirmationCode);
+  Optional<Booking> findBookingByIdAndCustomerId(Long bookingId, Long customerId);
 
-  List<BookedRoom> findByGuestEmail(String email);
+  List<Booking> findBookingsByHotelId(Long hotelId);
+
+  Optional<Booking> findBookingByIdAndHotel_HotelManagerId(Long bookingId, Long hotelManagerId);
 }
