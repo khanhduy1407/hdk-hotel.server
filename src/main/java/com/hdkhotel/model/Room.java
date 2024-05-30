@@ -26,6 +26,8 @@ public class Room {
   @Enumerated(EnumType.STRING)
   private RoomType roomType;
 
+  private String roomPreview;
+
   private int roomCount;
 
   private double pricePerNight;
@@ -40,6 +42,7 @@ public class Room {
       "id=" + id +
       ", hotel=" + hotel +
       ", roomType=" + roomType +
+      ", roomPreview=" + roomPreview +
       ", roomCount=" + roomCount +
       ", pricePerNight=" + pricePerNight +
       '}';

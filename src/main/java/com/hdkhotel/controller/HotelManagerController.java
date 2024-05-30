@@ -43,8 +43,8 @@ public class HotelManagerController {
     HotelRegistrationDTO hotelRegistrationDTO = new HotelRegistrationDTO();
 
     // Initialize roomDTOs with SINGLE and DOUBLE room types
-    RoomDTO singleRoom = new RoomDTO(null, null, RoomType.SINGLE, 0, 0.0);
-    RoomDTO doubleRoom = new RoomDTO(null, null, RoomType.DOUBLE, 0, 0.0);
+    RoomDTO singleRoom = new RoomDTO(null, null, RoomType.SINGLE, null, 0, 0.0);
+    RoomDTO doubleRoom = new RoomDTO(null, null, RoomType.DOUBLE, null, 0, 0.0);
     hotelRegistrationDTO.getRoomDTOs().add(singleRoom);
     hotelRegistrationDTO.getRoomDTOs().add(doubleRoom);
 

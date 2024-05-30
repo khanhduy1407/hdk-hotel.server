@@ -15,7 +15,13 @@
         <p th:text="${hotel.addressDTO.city + ', ' + hotel.addressDTO.country}">Thành phố, Quốc gia</p>
       </div>
       <div class="col-md-6 d-flex">
-        <div id="map" class="border bg-light flex-grow-1" style="min-height: 300px;"></div>
+        <div id="map" class="border bg-light flex-grow-1" style="min-height: 300px; display: none"></div>
+        <div class="sketchfab-embed-wrapper border bg-light flex-grow-1 rounded" style="overflow: hidden">
+          <iframe frameborder="0" allowfullscreen
+                  allow="autoplay; fullscreen; xr-spatial-tracking"
+                  style="min-height: 300px; width: 100%; height: 100%"
+                  th:src="${hotel.roomDTOs[0].roomPreview}"></iframe>
+        </div>
       </div>
     </div>
     <hr>

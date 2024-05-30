@@ -58,6 +58,7 @@ public class RoomServiceImpl implements RoomService {
     log.info("Phòng với ID: {} đã tìm thấy", roomDTO.getId());
 
     existingRoom.setRoomType(roomDTO.getRoomType());
+    existingRoom.setRoomPreview(roomDTO.getRoomPreview());
     existingRoom.setRoomCount(roomDTO.getRoomCount());
     existingRoom.setPricePerNight(roomDTO.getPricePerNight());
 
@@ -77,6 +78,7 @@ public class RoomServiceImpl implements RoomService {
     Room room = Room.builder()
       .hotel(hotel)
       .roomType(roomDTO.getRoomType())
+      .roomPreview(roomDTO.getRoomPreview())
       .roomCount(roomDTO.getRoomCount())
       .pricePerNight(roomDTO.getPricePerNight())
       .build();
@@ -90,6 +92,7 @@ public class RoomServiceImpl implements RoomService {
       .id(room.getId())
       .hotelId(room.getHotel().getId())
       .roomType(room.getRoomType())
+      .roomPreview(room.getRoomPreview())
       .roomCount(room.getRoomCount())
       .pricePerNight(room.getPricePerNight())
       .build();

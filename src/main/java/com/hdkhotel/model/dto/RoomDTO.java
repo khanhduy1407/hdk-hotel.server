@@ -19,6 +19,9 @@ public class RoomDTO {
 
   private RoomType roomType;
 
+  @NotNull(message = "Sử dụng hình ảnh phòng mẫu tại https://sketchfab.com/")
+  private String roomPreview;
+
   @NotNull(message = "Số phòng không được để trống")
   @PositiveOrZero(message = "Số phòng phải từ 0 trở lên")
   private Integer roomCount;

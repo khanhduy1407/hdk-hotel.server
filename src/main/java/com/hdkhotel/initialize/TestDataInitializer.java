@@ -104,33 +104,45 @@ public class TestDataInitializer implements CommandLineRunner {
           .address(addressBerlin3).hotelManager(hm2).build();
 
         Room singleRoomIst1 = Room.builder().roomType(RoomType.SINGLE)
+          .roomPreview("https://sketchfab.com/models/ce4a5b88cf3b41b5aa70d6dcf4e1e6bb/embed?autostart=1")
           .pricePerNight(370).roomCount(35).hotel(hotelIst1).build();
         Room doubleRoomIst1 = Room.builder().roomType(RoomType.DOUBLE)
+          .roomPreview("https://sketchfab.com/models/ce4a5b88cf3b41b5aa70d6dcf4e1e6bb/embed?autostart=1")
           .pricePerNight(459).roomCount(45).hotel(hotelIst1).build();
 
         Room singleRoomIst2 = Room.builder().roomType(RoomType.SINGLE)
+          .roomPreview("https://sketchfab.com/models/198d1dba97f44cf4a2ffbc13191491b4/embed?autostart=1")
           .pricePerNight(700).roomCount(25).hotel(hotelIst2).build();
         Room doubleRoomIst2 = Room.builder().roomType(RoomType.DOUBLE)
+          .roomPreview("https://sketchfab.com/models/198d1dba97f44cf4a2ffbc13191491b4/embed?autostart=1")
           .pricePerNight(890).roomCount(30).hotel(hotelIst2).build();
 
         Room singleRoomIst3 = Room.builder().roomType(RoomType.SINGLE)
+          .roomPreview("https://sketchfab.com/models/2d1fc1cc81454247a8976ac55ffdb93a/embed?autostart=1")
           .pricePerNight(691).roomCount(30).hotel(hotelIst3).build();
         Room doubleRoomIst3 = Room.builder().roomType(RoomType.DOUBLE)
+          .roomPreview("https://sketchfab.com/models/2d1fc1cc81454247a8976ac55ffdb93a/embed?autostart=1")
           .pricePerNight(800).roomCount(75).hotel(hotelIst3).build();
 
         Room singleRoomBerlin1 = Room.builder().roomType(RoomType.SINGLE)
+          .roomPreview("https://sketchfab.com/models/6db0b351424141099e30834c6115f40a/embed?autostart=1")
           .pricePerNight(120.0).roomCount(25).hotel(hotelBerlin1).build();
         Room doubleRoomBerlin1 = Room.builder().roomType(RoomType.DOUBLE)
+          .roomPreview("https://sketchfab.com/models/6db0b351424141099e30834c6115f40a/embed?autostart=1")
           .pricePerNight(250.0).roomCount(15).hotel(hotelBerlin1).build();
 
         Room singleRoomBerlin2 = Room.builder().roomType(RoomType.SINGLE)
+          .roomPreview("https://sketchfab.com/models/d20920a06ce74893abfd64c74b6f2f29/embed?autostart=1")
           .pricePerNight(300).roomCount(50).hotel(hotelBerlin2).build();
         Room doubleRoomBerlin2 = Room.builder().roomType(RoomType.DOUBLE)
+          .roomPreview("https://sketchfab.com/models/d20920a06ce74893abfd64c74b6f2f29/embed?autostart=1")
           .pricePerNight(400).roomCount(50).hotel(hotelBerlin2).build();
 
         Room singleRoomBerlin3 = Room.builder().roomType(RoomType.SINGLE)
+          .roomPreview("https://sketchfab.com/models/47c7c39f767e40eb84d1b1d857af525b/embed?autostart=1")
           .pricePerNight(179).roomCount(45).hotel(hotelBerlin3).build();
         Room doubleRoomBerlin3 = Room.builder().roomType(RoomType.DOUBLE)
+          .roomPreview("https://sketchfab.com/models/47c7c39f767e40eb84d1b1d857af525b/embed?autostart=1")
           .pricePerNight(256).roomCount(25).hotel(hotelBerlin3).build();
 
         hotelIst1.getRooms().addAll(Arrays.asList(singleRoomIst1,doubleRoomIst1));
