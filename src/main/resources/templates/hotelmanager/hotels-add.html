@@ -48,10 +48,17 @@
                 <label class="form-label" for="singleRoomCount">Số lượng phòng đơn:</label>
                 <input class="form-control" id="singleRoomCount" type="number"
                        th:field="*{roomDTOs[0].roomCount}"
-                       placeholder="0">
+                       placeholder="https://sketchfab.com/models/...../embed?autostart=1">
                 <input type="hidden" th:field="*{roomDTOs[0].roomType}">
                 <p class="text-danger" th:if="${#fields.hasErrors('roomDTOs[0].roomCount')}"
                    th:errors="*{roomDTOs[0].roomCount}"></p>
+
+                <label class="form-label" for="singleRoomPreview">Hình mẫu phòng đơn:</label>
+                <input class="form-control" id="singleRoomPreview" type="text"
+                       th:field="*{roomDTOs[0].roomPreview}"
+                       placeholder="0">
+                <p class="text-danger" th:if="${#fields.hasErrors('roomDTOs[0].roomPreview')}"
+                   th:errors="*{roomDTOs[0].roomPreview}"></p>
 
                 <label class="form-label" for="singleRoomPrice">Giá phòng đơn ($):</label>
                 <input class="form-control" id="singleRoomPrice" type="number" step="0.01"
@@ -69,6 +76,13 @@
                 <input type="hidden" th:field="*{roomDTOs[1].roomType}">
                 <p class="text-danger" th:if="${#fields.hasErrors('roomDTOs[1].roomCount')}"
                    th:errors="*{roomDTOs[1].roomCount}"></p>
+
+                <label class="form-label" for="doubleRoomPreview">Hình mẫu phòng đôi:</label>
+                <input class="form-control" id="doubleRoomPreview" type="text"
+                       th:field="*{roomDTOs[1].roomPreview}"
+                       placeholder="https://sketchfab.com/models/...../embed?autostart=1">
+                <p class="text-danger" th:if="${#fields.hasErrors('roomDTOs[1].roomPreview')}"
+                   th:errors="*{roomDTOs[1].roomPreview}"></p>
 
                 <label class="form-label" for="doubleRoomPrice">Giá phòng đôi ($):</label>
                 <input class="form-control" id="doubleRoomPrice" type="number" step="0.01"
